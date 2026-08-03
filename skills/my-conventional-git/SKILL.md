@@ -1,6 +1,6 @@
 ---
 name: my-conventional-git
-description: Use this whenever the user asks for conventional Git help: creating or naming branches, writing commits, preparing PR titles or bodies, deciding Conventional Commit types, handling release tags/version bumps/changelogs, or making AI-agent Git workflow choices. Also use before making commits or PRs when the repo has no clearer local convention. This skill applies an opinionated profile based on official Conventional Commits and Conventional Branch, while inspecting and respecting repository-local conventions first.
+description: "Use this whenever the user asks for conventional Git help: creating or naming branches, writing commits, preparing PR titles or bodies, deciding Conventional Commit types, handling release tags/version bumps/changelogs, or making AI-agent Git workflow choices. Also use before making commits or PRs when the repo has no clearer local convention. This skill applies an opinionated profile based on official Conventional Commits and Conventional Branch, while inspecting and respecting repository-local conventions first."
 sources:
   - https://www.conventionalcommits.org/en/v1.0.0/
   - https://conventionalbranch.org/
