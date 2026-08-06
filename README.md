@@ -7,8 +7,10 @@ Reusable agent skills for OpenCode and other tools supporting the Agent Skills f
 Install all skills globally with:
 
 ```bash
-npx skills add Azther0z/my-agent-skills --global --all
+npx skills add Azther0z/my-agent-skills --global --skill '*'
 ```
+
+Use `--skill '*'` instead of `--all`: the latter also targets every supported agent.
 
 Install selected skills with:
 
