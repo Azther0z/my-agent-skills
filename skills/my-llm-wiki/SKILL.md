@@ -98,17 +98,7 @@ Triggers only on the first Ingest. Check whether `raw/` and `wiki/` exist. Creat
 - `wiki/index.md` with `type: index` frontmatter and heading `# Knowledge Base Index`
 - `wiki/log.md` with `type: log` frontmatter and heading `# Wiki Log`
 
-Also create or update root `AGENTS.md` with a compact LLM Wiki section. If `AGENTS.md` already exists, preserve unrelated guidance and add or refresh only the wiki-specific lines. Follow the high-signal convention: include only non-obvious operational guidance that changes future agent behavior, not summaries of every schema field.
-
-Recommended section:
-
-```markdown
-## LLM Wiki
-- Treat `raw/` as immutable evidence. Preserve source text faithfully; do not add summaries, commentary, or cleanup rewrites to raw evidence files.
-- Treat `wiki/` as compiled knowledge. Ground every load-bearing fact in referenced raw evidence or cited wiki archive sources.
-- Ingest writes evidence to `raw/`, updates affected `wiki/` pages, then updates `wiki/index.md` and `wiki/log.md`; plain queries do not write files unless the user asks to archive the answer.
-- Use the `my-llm-wiki` skill when available before ingesting, querying, archiving, or linting this wiki.
-```
+Also create or update root `AGENTS.md` with the contract in `references/AGENTS.md`. If `AGENTS.md` already exists, preserve unrelated guidance and add or refresh only the managed LLM Wiki contract. Preserve any existing `Wiki Memory` section byte-for-byte unless the user asks to change it.
 
 If Query or Lint cannot find the wiki structure, tell the user: "Run an ingest first to initialize the wiki." Do not auto-create.
 
@@ -283,7 +273,7 @@ Quality checks on the wiki. Three categories have different authority levels.
 
 Fix these automatically:
 
-**AGENTS.md wiki section** — ensure root `AGENTS.md` exists and contains the compact LLM Wiki operating contract from Initialization. If it exists, update only the wiki section; preserve unrelated repository guidance. Do not create tool-specific instruction files.
+**AGENTS.md wiki section** — ensure root `AGENTS.md` exists and contains the LLM Wiki contract from `references/AGENTS.md`. If it exists, update only the managed LLM Wiki contract; preserve unrelated repository guidance and preserve `Wiki Memory` byte-for-byte. Do not create tool-specific instruction files.
 
 **Index consistency** — compare `wiki/index.md` against actual wiki pages (excluding index.md and log.md):
 - File exists but missing from index → add entry with `(no summary)` placeholder. Use `updated` for articles and `archived` for archives; otherwise fall back to file modified date.
@@ -346,8 +336,8 @@ Append to `wiki/log.md`:
 - Standard Markdown with YAML frontmatter.
 - `raw/` paths are arbitrary; choose descriptive paths when the user does not specify one.
 - `wiki/` supports one level of topic subdirectories only. No deeper nesting.
-- Root `AGENTS.md` carries only compact, high-signal wiki operating guidance for future agents; the complete schema stays in this skill and its references.
+- Root `AGENTS.md` carries the managed LLM Wiki contract and its `Wiki Memory` section; the complete schema stays in this skill and its references.
 - Today's date is used for `collected`, `updated`, `archived`, and log entries. `published` comes from the source; use `null` when unavailable.
 - YAML path fields are project-root-relative.
 - Markdown body links are relative to the current file.
-- First ingest initializes `AGENTS.md` if needed. Routine ingest updates `wiki/index.md` and `wiki/log.md`; No material updates only the log. Archive updates the index and log. Lint updates `AGENTS.md` and `wiki/log.md`, and may update `wiki/index.md` when auto-fixing index entries. Plain queries do not write files.
+- First ingest initializes `AGENTS.md` if needed. Routine ingest updates `wiki/index.md` and `wiki/log.md`; No material updates only the log. Archive updates the index and log. Lint updates the managed `AGENTS.md` contract and `wiki/log.md`, preserves `Wiki Memory`, and may update `wiki/index.md` when auto-fixing index entries. Plain queries do not write files.
