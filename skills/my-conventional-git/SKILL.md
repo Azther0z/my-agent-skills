@@ -47,7 +47,7 @@ When a change fits multiple types or branch categories, decide based on intent a
 
 ## AI Origin
 
-Record AI involvement with the trailer `Generated-by: <agent>` for every agent touch when a durable Git artifact is being produced.
+Record AI involvement with the trailer `Assisted by: <agent>` for every agent touch when a durable Git artifact is being produced.
 
 - Prefer the PR body footer when there is a PR.
 - Use the commit footer when there is no PR and the commit is the durable artifact.

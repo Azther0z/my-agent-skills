@@ -64,7 +64,7 @@ Use trailer-style footers.
 
 - `Refs: ABC-123` for issue references by default.
 - `Closes:` or `Fixes:` only when the commit intentionally closes an issue in the target platform.
-- `Generated-by: <agent>` when there is no PR and the commit is the durable artifact for agent-touched work.
+- `Assisted by: <agent>` when there is no PR and the commit is the durable artifact for agent-touched work.
 
 ## Reverts
 

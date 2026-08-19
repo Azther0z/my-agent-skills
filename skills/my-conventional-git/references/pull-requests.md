@@ -26,7 +26,7 @@ Default structure:
 - ...
 
 Refs: ABC-123
-Generated-by: <agent>
+Assisted by: <agent>
 ```
 
 Use concise bullets. Add or remove sections to match existing repo templates.
@@ -36,7 +36,7 @@ Use concise bullets. Add or remove sections to match existing repo templates.
 - `Refs: ABC-123` by default for issue or ticket references.
 - `Closes:` or `Fixes:` only when the PR should auto-close an issue.
 - `BREAKING CHANGE:` when the PR introduces a breaking change.
-- `Generated-by: <agent>` for every agent touch.
+- `Assisted by: <agent>` for every agent touch.
 
 ## Breaking PRs
 
