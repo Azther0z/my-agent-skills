@@ -59,7 +59,7 @@ During the interview:
 - Check code against stated domain behavior when the repository can answer the question.
 - Update `CONTEXT.md` immediately when a term is resolved.
 - Keep `CONTEXT.md` as a glossary only, not a spec, scratch pad, or implementation-decision log.
-- Offer ADRs sparingly, only when the reference criteria are met.
+- Offer ADRs sparingly, only when the reference criteria are met. When creating one, follow `references/ADR-FORMAT.md` for its one-decision rule, required structure, and validation checklist.
 
 ## Markdown Fallback Format
 

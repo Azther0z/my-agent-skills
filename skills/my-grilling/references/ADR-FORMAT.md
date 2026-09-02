@@ -4,23 +4,62 @@ ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slu
 
 Create the `docs/adr/` directory lazily, only when the first ADR is needed.
 
-## Template
+## One Decision Per ADR
+
+One ADR records exactly one architectural decision: one chosen architectural outcome and its rationale. A decision may contain multiple implementation details that directly realize that outcome.
+
+Split decisions into separate ADRs when the choices can be accepted, rejected, or reversed independently. Do not combine independently changeable choices under a broad topic or title. Multiple consequences do not make an ADR cover multiple decisions.
+
+An ADR must have a real decision. Do not create an ADR whose `Decision` section is `None.`.
+
+## Required Format
+
+Every ADR must use the following frontmatter and body sections, in this order:
 
 ```md
+---
+status: proposed
+---
+
 # {Short title of the decision}
 
-{1-3 sentences: what's the context, what did we decide, and why.}
+## Context
+
+{Why this decision is needed and the constraints that shape it. Use `None.` only when there is no additional context worth recording.}
+
+## Decision
+
+{The single chosen architectural outcome and its rationale. This section must not be `None.`.}
+
+## Considered Options
+
+{Meaningful alternatives, their trade-offs, and why they were not selected. Use `None.` when no alternatives or trade-offs are worth preserving.}
+
+## Consequences
+
+{Important results, constraints, or follow-up effects of the decision. Use `None.` when there are no consequences worth recording.}
 ```
 
-That's it. An ADR can be a single paragraph. The value is in recording that a decision was made and why, not in filling out sections.
+`status` is required frontmatter and must be one of:
 
-## Optional Sections
+- `proposed`
+- `accepted`
+- `deprecated`
+- `superseded by ADR-NNNN`, where `NNNN` is the number of the ADR that supersedes this one
 
-Only include these when they add genuine value. Most ADRs will not need them.
+The exact empty marker for an applicable but empty section is `None.`. Do not omit a required heading or replace the marker with a blank section, `N/A`, or a prose explanation that does not state the section is empty.
 
-- **Status** frontmatter (`proposed | accepted | deprecated | superseded by ADR-NNNN`) - useful when decisions are revisited
-- **Considered Options** - only when the rejected alternatives are worth remembering
-- **Consequences** - only when non-obvious downstream effects need to be called out
+## Validity Checklist
+
+Before accepting an ADR, verify all of the following:
+
+- It records exactly one architectural decision.
+- Its chosen outcome is stated in `Decision` and that section is not `None.`.
+- Independently changeable choices are split into separate ADRs.
+- Required `status` frontmatter is present and uses an allowed value.
+- `Context`, `Decision`, `Considered Options`, and `Consequences` headings are present and in the required order.
+- `Considered Options` includes options, trade-offs, and rejection rationale when alternatives were evaluated; otherwise it contains exactly `None.`.
+- Any other applicable empty section contains exactly `None.`.
 
 ## Numbering
 
