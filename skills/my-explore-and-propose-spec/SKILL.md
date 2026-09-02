@@ -1,6 +1,6 @@
 ---
 name: my-explore-and-propose-spec
-description: "Explore an idea and/or create a plain-Markdown change proposal with required spec artifacts. Use when the user wants to think through a change, propose a feature or fix, create a spec-driven plan, start a docs/change workflow, or replace OpenSpec-style planning without the OpenSpec CLI. This is the default entry point for new work in the user's my-* change workflow."
+description: "Use only when the user explicitly asks for a specification, spec-driven change proposal, or to start a docs/change workflow. Do not trigger for generic requests to propose a plan or write an implementation plan. Supports oneshot proposals by default and a step-by-step grilling path when requested. This is the default entry point for explicit spec and change work in the user's my-* change workflow."
 sources:
   - "https://github.com/Fission-AI/OpenSpec/tree/main"
   - "https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/docs/concepts.md"
@@ -10,7 +10,7 @@ sources:
 
 # My Explore And Propose Spec
 
-Think through an idea, then capture it as plain Markdown when it is ready. Preserve the useful OpenSpec artifact contract while removing OpenSpec-specific machinery.
+For an explicit specification or change request, think through the idea and capture it as plain Markdown when it is ready. Preserve the useful OpenSpec artifact contract while removing OpenSpec-specific machinery.
 
 Do not use the `openspec` CLI, `openspec/` directories, stores, schemas, generated instructions, or `.openspec.yaml`. This workflow owns only `docs/change/` and `docs/spec/`.
 
@@ -51,23 +51,51 @@ Use `spec/` singular to align with the user's `docs/spec/...` preference. A chan
 
 ### Explore Mode
 
-Use this when the user is not ready to write artifacts, asks to explore, asks for options, or brings an unclear problem.
+Use this for an explicit specification or change request when the user is not ready to write artifacts, asks to explore the change, asks for options about the change, or brings an unclear change problem.
 
 - Read the relevant code and docs before forming conclusions.
 - Ask useful questions only after inspecting facts you can discover yourself.
 - Compare options, identify risks, and recommend a path when the evidence supports it.
-- Do not write files or code unless the user asks to propose or capture the plan.
+- Do not write files or code unless the user explicitly asks to create or capture the specification or change.
 - When the idea crystallizes, offer to create a proposed change under `docs/change/<change-name>/`.
 
 ### Propose Mode
 
-Use this when the user asks to propose, spec, plan, start a change, or already gives a clear implementation goal.
+Use this only when the user explicitly asks for a specification, spec-driven change proposal, or to start a docs/change workflow. Do not use it for a generic plan or implementation-plan request.
+
+Choose an execution path explicitly when the user names one. Default to `oneshot`.
+
+#### `oneshot` Path
+
+Create the complete required artifact set in one pass after inspecting the repo. Keep artifacts concise and behavior-focused. Do not copy huge code summaries into them.
+
+#### `grilling` Path
+
+Use this path when the user asks for `grilling`, `step by step`, `progressive`, or one artifact at a time.
+
+- Inspect the repo for relevant code, existing docs, and existing `docs/spec/` main specs.
+- Work through the required artifacts in order: `proposal.md`, each needed delta spec under `spec/`, `design.md`, and `tasks.md`.
+- Create exactly one artifact file per step, then stop and wait for the user's confirmation before creating the next artifact.
+- At every artifact boundary, read the existing artifacts as settled context and ask only newly unblocked questions. Do not repeat questions whose answers are already recorded.
+- If `my-grilling` is available, invoke it in with-artifact mode at each boundary. It may maintain domain docs and creates an ADR for each qualifying design decision; link that ADR from the corresponding `design.md` decision block.
+- If `my-grilling` is unavailable, use the same frontier-question workflow locally without document mode. Do not create ADRs in this fallback path.
+- If a decision does not meet the ADR criteria, keep it self-contained in `design.md` without an ADR link.
+
+##### Embedded Grilling Fallback
+
+Use this workflow only when the user selected the `grilling` path and `my-grilling` is unavailable:
+
+1. Read the existing change artifacts and inspect any relevant code or docs before asking questions.
+2. Build a decision tree from the user's goal. The frontier is every decision whose prerequisites are settled and can be asked without guessing at unanswered dependencies.
+3. Ask the whole current frontier in one round, using concise questions with recommended answers and clear trade-offs. Ask the user to decide; do not decide silently.
+4. Wait for the user's answers, then recompute the frontier. Continue until the questions needed for the next artifact are settled and the user confirms shared understanding.
+5. Create only the next artifact in the required order, then stop. Do not update `CONTEXT.md`, create ADRs, or create any other document as a side effect of this fallback.
+6. At the next artifact boundary, reread the artifacts and ask only newly unblocked questions. Treat answers already captured in those artifacts as settled and never repeat them without a reason.
+
+In either path:
 
 1. Derive a kebab-case `<change-name>` from the user's request unless they provide one.
-2. Inspect the repo for relevant code, existing docs, and existing `docs/spec/` main specs.
-3. Create the required artifact set under `docs/change/<change-name>/`.
-4. Keep artifacts concise and behavior-focused. Do not copy huge code summaries into them.
-5. If a target change already exists, update it only when the user is clearly continuing the same work; otherwise ask before overwriting or creating a similarly named change.
+2. If a target change already exists, update it only when the user is clearly continuing the same work; otherwise ask before overwriting or creating a similarly named change.
 
 ## Artifact Templates
 
@@ -142,6 +170,8 @@ Include only sections that apply, except that every change must have at least on
 
 ### `design.md`
 
+Design decisions use the same decision vocabulary as `my-grilling` and `references/ADR-FORMAT.md` where the concepts overlap: `Decision`, rationale, considered options, consequences, and the exact empty marker `None.`. Each `### Decision: <Name>` block represents one decision; split independently changeable decisions into separate blocks. Keep the block compact rather than copying the ADR section template. In the `grilling` path, link a qualifying ADR from the block; otherwise keep the decision self-contained.
+
 ```markdown
 # Design: <Title>
 
@@ -152,7 +182,7 @@ Include only sections that apply, except that every change must have at least on
 ## Decisions
 
 ### Decision: <Name>
-<Decision, rationale, and rejected alternatives when useful.>
+<The chosen decision and rationale. Include considered options, their trade-offs, and consequences when meaningful; write `None.` when there are no meaningful options or consequences. If the grilling path creates an ADR, add a link such as `ADR: [ADR-NNNN](../../adr/NNNN-slug.md)`.>
 
 ## Implementation Notes
 
