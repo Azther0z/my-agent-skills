@@ -30,5 +30,7 @@ The `npx skills` CLI installs the skills under the user's agent directories and 
 - `my-grilling`: conduct structured requirements interviews.
 - `my-init-spec`: backfill specifications for existing behavior.
 - `my-llm-wiki`: maintain an evidence-backed LLM knowledge base.
+- `pdf-parser`: create grounded PDF Markdown derivatives with explicit session vision handoff.
+- `learning-artifact-creation`: build grounded study packs, quizzes, practice surfaces, and standalone learning maps.
 - `my-skill-creator`: create, evaluate, and improve skills.
 - `my-verify-change`: verify implementations against change proposals.

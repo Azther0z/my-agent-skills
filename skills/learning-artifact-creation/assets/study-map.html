@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>__STUDY_MAP_TITLE__</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #e9eef2;
+        --muted: #91a1ab;
+        --panel: #142028;
+        --panel-raised: #1b2a33;
+        --line: #30434f;
+        --accent: #f2b866;
+        --accent-strong: #f48b5c;
+        --blueprint: #0c151b;
+        --shadow: 0 24px 60px rgb(0 0 0 / 28%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 0%, rgb(37 81 91 / 40%), transparent 34rem),
+          linear-gradient(145deg, #0a1116 0%, #101b22 52%, #0a1217 100%);
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      }
+
+      button {
+        color: inherit;
+        font: inherit;
+      }
+
+      .site {
+        width: min(1500px, 100%);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: clamp(1.25rem, 3vw, 3.5rem);
+      }
+
+      .hero {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 2rem;
+        margin: 0 auto 1.5rem;
+        max-width: 1180px;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.55rem;
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 900px;
+        margin-bottom: 0.65rem;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.1rem, 5vw, 4.8rem);
+        font-weight: 500;
+        letter-spacing: -0.045em;
+        line-height: 0.98;
+      }
+
+      .subtitle {
+        max-width: 700px;
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+        line-height: 1.55;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.62fr);
+        gap: 1rem;
+        max-width: 1180px;
+        margin: 0 auto;
+      }
+
+      .card {
+        border: 1px solid rgb(111 143 156 / 26%);
+        border-radius: 1.1rem;
+        background: rgb(20 32 40 / 91%);
+        box-shadow: var(--shadow);
+      }
+
+      .map-card {
+        overflow: hidden;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.8rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .levels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+      }
+
+      .level,
+      .reset,
+      .deeper {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.48rem 0.8rem;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.78rem;
+        transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+      }
+
+      .level:hover,
+      .level:focus-visible,
+      .reset:hover,
+      .reset:focus-visible,
+      .deeper:hover,
+      .deeper:focus-visible {
+        border-color: var(--accent);
+        outline: none;
+      }
+
+      .level[aria-selected="true"] {
+        border-color: var(--accent);
+        color: #1a1712;
+        background: var(--accent);
+      }
+
+      .reset {
+        color: var(--muted);
+      }
+
+      #map {
+        display: block;
+        width: 100%;
+        min-height: 520px;
+        background: var(--blueprint);
+        cursor: grab;
+        touch-action: none;
+      }
+
+      #map.is-dragging {
+        cursor: grabbing;
+      }
+
+      .hint {
+        margin: 0;
+        padding: 0.7rem 1rem 0.85rem;
+        color: var(--muted);
+        font-size: 0.75rem;
+      }
+
+      .inspector {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        padding: 1.35rem;
+      }
+
+      .inspector h2 {
+        margin-bottom: 0.7rem;
+        color: var(--accent);
+        font-size: 0.74rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .node-title {
+        margin-bottom: 0.8rem;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.55rem, 3vw, 2.4rem);
+        line-height: 1.05;
+      }
+
+      .node-summary,
+      .node-detail {
+        color: #c2cdd2;
+        line-height: 1.65;
+      }
+
+      .node-detail {
+        margin-bottom: 1.2rem;
+        font-size: 0.9rem;
+      }
+
+      .sources {
+        margin: auto 0 0;
+        padding: 1rem 0 0;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 0.76rem;
+      }
+
+      .sources strong {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: var(--ink);
+      }
+
+      .sources ul {
+        margin: 0;
+        padding-left: 1rem;
+      }
+
+      .sources code {
+        color: var(--accent);
+        font-family: "SFMono-Regular", Consolas, monospace;
+        overflow-wrap: anywhere;
+      }
+
+      .deeper {
+        align-self: start;
+        margin-top: 0.5rem;
+        color: #1a1712;
+        border-color: var(--accent);
+        background: var(--accent);
+      }
+
+      .empty {
+        display: grid;
+        height: 100%;
+        min-height: 260px;
+        place-items: center;
+        color: var(--muted);
+      }
+
+      .edge {
+        stroke: #65808c;
+        stroke-dasharray: 8 7;
+        stroke-width: 2;
+        opacity: 0.78;
+      }
+
+      .edge-label {
+        fill: #9db0b8;
+        font-size: 14px;
+        paint-order: stroke;
+        stroke: var(--blueprint);
+        stroke-width: 5px;
+      }
+
+      .node {
+        cursor: pointer;
+        outline: none;
+      }
+
+      .node-shape {
+        fill: var(--panel-raised);
+        stroke: #66818d;
+        stroke-width: 2;
+        transition: fill 160ms ease, stroke 160ms ease, transform 160ms ease;
+      }
+
+      .node:hover .node-shape,
+      .node:focus-visible .node-shape,
+      .node[aria-pressed="true"] .node-shape {
+        fill: #293c47;
+        stroke: var(--accent);
+        stroke-width: 3;
+      }
+
+      .node-label {
+        fill: var(--ink);
+        font-size: 17px;
+        font-weight: 650;
+        pointer-events: none;
+        text-anchor: middle;
+      }
+
+      .node-level {
+        fill: var(--accent);
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        pointer-events: none;
+        text-anchor: middle;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 900px) {
+        .hero {
+          display: block;
+        }
+
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .inspector {
+          min-height: 260px;
+        }
+
+        .sources {
+          margin-top: 1.3rem;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .site {
+          padding: 1rem;
+        }
+
+        .toolbar {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        #map {
+          min-height: 420px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="site">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Study system / zoomable map</p>
+          <h1>__STUDY_MAP_TITLE__</h1>
+          <p class="subtitle" id="map-subtitle"></p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="card map-card" aria-label="Interactive learning map">
+          <div class="toolbar">
+            <nav class="levels" id="levels" aria-label="Map level"></nav>
+            <button class="reset" id="reset" type="button">Reset view</button>
+          </div>
+          <svg id="map" viewBox="0 0 1200 760" role="img" aria-label="Learning map">
+            <defs>
+              <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1c3039" stroke-width="1" />
+              </pattern>
+              <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#65808c" />
+              </marker>
+            </defs>
+            <rect width="1200" height="760" fill="url(#grid)" />
+            <g id="edge-layer"></g>
+            <g id="node-layer"></g>
+          </svg>
+          <p class="hint">Drag to pan. Scroll or pinch to zoom. Select a node to inspect it.</p>
+        </section>
+
+        <aside class="card inspector" aria-live="polite">
+          <h2>Selected concept</h2>
+          <div id="inspector-content"></div>
+        </aside>
+      </main>
+    </div>
+
+    <script id="study-map-data" type="application/json">__STUDY_MAP_DATA__</script>
+    <script>
+      (() => {
+        "use strict";
+
+        const SVG_NS = "http://www.w3.org/2000/svg";
+        const WIDTH = 1200;
+        const HEIGHT = 760;
+        const data = JSON.parse(document.getElementById("study-map-data").textContent);
+        const levels = document.getElementById("levels");
+        const svg = document.getElementById("map");
+        const edgeLayer = document.getElementById("edge-layer");
+        const nodeLayer = document.getElementById("node-layer");
+        const inspector = document.getElementById("inspector-content");
+        const subtitle = document.getElementById("map-subtitle");
+        const nodes = new Map((data.nodes || []).map((node) => [node.id, node]));
+        const state = {
+          level: data.levels[0]?.id,
+          selected: null,
+          view: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
+          pointer: null,
+        };
+
+        subtitle.textContent = data.subtitle || "Move from the big picture to the details.";
+
+        function position(node, index) {
+          const column = index % 4;
+          const row = Math.floor(index / 4);
+          return {
+            x: Number.isFinite(node.x) ? node.x : 180 + column * 270,
+            y: Number.isFinite(node.y) ? node.y : 190 + row * 180,
+            radius: Number.isFinite(node.radius) ? node.radius : 78,
+          };
+        }
+
+        function element(name, attributes = {}) {
+          const item = document.createElementNS(SVG_NS, name);
+          for (const [key, value] of Object.entries(attributes)) item.setAttribute(key, value);
+          return item;
+        }
+
+        function renderLevels() {
+          levels.replaceChildren();
+          for (const level of data.levels) {
+            const button = document.createElement("button");
+            button.className = "level";
+            button.type = "button";
+            button.textContent = level.label || level.id;
+            button.setAttribute("aria-selected", String(level.id === state.level));
+            button.addEventListener("click", () => {
+              state.level = level.id;
+              state.selected = null;
+              render();
+            });
+            levels.append(button);
+          }
+        }
+
+        function visibleNodes() {
+          return (data.nodes || []).filter((node) => node.level === state.level);
+        }
+
+        function addWrappedText(parent, text, x, y, className) {
+          const words = String(text || "").split(/\s+/).filter(Boolean);
+          const textElement = element("text", { x, y, class: className });
+          let line = "";
+          let lineNumber = 0;
+          for (const word of words) {
+            const next = line ? `${line} ${word}` : word;
+            if (next.length > 18 && line) {
+              const tspan = element("tspan", { x, dy: lineNumber ? 20 : 0 });
+              tspan.textContent = line;
+              textElement.append(tspan);
+              line = word;
+              lineNumber += 1;
+            } else {
+              line = next;
+            }
+          }
+          if (line) {
+            const tspan = element("tspan", { x, dy: lineNumber ? 20 : 0 });
+            tspan.textContent = line;
+            textElement.append(tspan);
+          }
+          parent.append(textElement);
+        }
+
+        function selectNode(id) {
+          state.selected = id;
+          updateInspector();
+          for (const item of nodeLayer.querySelectorAll(".node")) {
+            item.setAttribute("aria-pressed", String(item.dataset.id === id));
+          }
+        }
+
+        function exploreChildren(node) {
+          const child = (node.children || []).map((id) => nodes.get(id)).find(Boolean);
+          if (!child) return;
+          state.level = child.level;
+          state.selected = child.id;
+          render();
+        }
+
+        function updateInspector() {
+          const node = nodes.get(state.selected) || visibleNodes()[0];
+          inspector.replaceChildren();
+          if (!node) {
+            const empty = document.createElement("p");
+            empty.className = "empty";
+            empty.textContent = "No concepts are defined at this level yet.";
+            inspector.append(empty);
+            return;
+          }
+          state.selected = node.id;
+
+          const title = document.createElement("div");
+          title.className = "node-title";
+          title.textContent = node.label;
+          inspector.append(title);
+
+          const summary = document.createElement("p");
+          summary.className = "node-summary";
+          summary.textContent = node.summary || "No summary recorded.";
+          inspector.append(summary);
+
+          if (node.detail) {
+            const detail = document.createElement("p");
+            detail.className = "node-detail";
+            detail.textContent = node.detail;
+            inspector.append(detail);
+          }
+
+          if (node.children?.length) {
+            const deeper = document.createElement("button");
+            deeper.className = "deeper";
+            deeper.type = "button";
+            deeper.textContent = "Explore details";
+            deeper.addEventListener("click", () => exploreChildren(node));
+            inspector.append(deeper);
+          }
+
+          const sourceBox = document.createElement("div");
+          sourceBox.className = "sources";
+          const sourceHeading = document.createElement("strong");
+          sourceHeading.textContent = "Source trail";
+          sourceBox.append(sourceHeading);
+          const sourceList = document.createElement("ul");
+          for (const source of node.sources || []) {
+            const item = document.createElement("li");
+            const code = document.createElement("code");
+            code.textContent = source;
+            item.append(code);
+            sourceList.append(item);
+          }
+          if (!sourceList.children.length) {
+            const item = document.createElement("li");
+            item.textContent = "No source reference recorded.";
+            sourceList.append(item);
+          }
+          sourceBox.append(sourceList);
+          inspector.append(sourceBox);
+        }
+
+        function render() {
+          renderLevels();
+          edgeLayer.replaceChildren();
+          nodeLayer.replaceChildren();
+          const visible = visibleNodes();
+          const visibleIds = new Set(visible.map((node) => node.id));
+          const positions = new Map(visible.map((node, index) => [node.id, position(node, index)]));
+
+          for (const edge of data.edges || []) {
+            if (!visibleIds.has(edge.from) || !visibleIds.has(edge.to)) continue;
+            const from = positions.get(edge.from);
+            const to = positions.get(edge.to);
+            edgeLayer.append(
+              element("line", {
+                x1: from.x,
+                y1: from.y,
+                x2: to.x,
+                y2: to.y,
+                class: "edge",
+                "marker-end": "url(#arrow)",
+              })
+            );
+            if (edge.label) {
+              const label = element("text", {
+                x: (from.x + to.x) / 2,
+                y: (from.y + to.y) / 2 - 8,
+                class: "edge-label",
+              });
+              label.textContent = edge.label;
+              edgeLayer.append(label);
+            }
+          }
+
+          visible.forEach((node, index) => {
+            const point = positions.get(node.id);
+            const group = element("g", {
+              class: "node",
+              tabindex: "0",
+              role: "button",
+              "aria-label": node.label,
+              "aria-pressed": String(node.id === state.selected),
+            });
+            group.dataset.id = node.id;
+            group.append(
+              element("circle", {
+                cx: point.x,
+                cy: point.y,
+                r: point.radius,
+                class: "node-shape",
+              })
+            );
+            const level = element("text", { x: point.x, y: point.y - 16, class: "node-level" });
+            level.textContent = node.level;
+            group.append(level);
+            addWrappedText(group, node.label, point.x, point.y + 14, "node-label");
+            group.addEventListener("click", () => selectNode(node.id));
+            group.addEventListener("keydown", (event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                selectNode(node.id);
+              }
+            });
+            nodeLayer.append(group);
+          });
+
+          updateInspector();
+        }
+
+        function updateViewBox() {
+          const view = state.view;
+          svg.setAttribute("viewBox", `${view.x} ${view.y} ${view.width} ${view.height}`);
+        }
+
+        svg.addEventListener("wheel", (event) => {
+          event.preventDefault();
+          const rect = svg.getBoundingClientRect();
+          const relativeX = (event.clientX - rect.left) / rect.width;
+          const relativeY = (event.clientY - rect.top) / rect.height;
+          const factor = event.deltaY < 0 ? 0.88 : 1.14;
+          const nextWidth = Math.min(2400, Math.max(480, state.view.width * factor));
+          const nextHeight = Math.min(1520, Math.max(304, state.view.height * factor));
+          state.view.x += (state.view.width - nextWidth) * relativeX;
+          state.view.y += (state.view.height - nextHeight) * relativeY;
+          state.view.width = nextWidth;
+          state.view.height = nextHeight;
+          updateViewBox();
+        }, { passive: false });
+
+        svg.addEventListener("pointerdown", (event) => {
+          state.pointer = { x: event.clientX, y: event.clientY };
+          svg.classList.add("is-dragging");
+          svg.setPointerCapture(event.pointerId);
+        });
+
+        svg.addEventListener("pointermove", (event) => {
+          if (!state.pointer) return;
+          const rect = svg.getBoundingClientRect();
+          const scaleX = state.view.width / rect.width;
+          const scaleY = state.view.height / rect.height;
+          state.view.x -= (event.clientX - state.pointer.x) * scaleX;
+          state.view.y -= (event.clientY - state.pointer.y) * scaleY;
+          state.pointer = { x: event.clientX, y: event.clientY };
+          updateViewBox();
+        });
+
+        svg.addEventListener("pointerup", () => {
+          state.pointer = null;
+          svg.classList.remove("is-dragging");
+        });
+
+        svg.addEventListener("pointercancel", () => {
+          state.pointer = null;
+          svg.classList.remove("is-dragging");
+        });
+
+        document.getElementById("reset").addEventListener("click", () => {
+          state.view = { x: 0, y: 0, width: WIDTH, height: HEIGHT };
+          updateViewBox();
+        });
+
+        render();
+      })();
+    </script>
+  </body>
+</html>
