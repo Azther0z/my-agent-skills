@@ -1,5 +1,5 @@
 ---
-name: pdf-parser
+name: my-parse-pdf
 description: "Use when a user asks to ingest, extract, OCR, transcribe, or make a PDF searchable, especially for study slides, assignments, scanned handouts, or bilingual English/Thai material. Preserve the original PDF, create a grounded Markdown companion and machine-readable manifest, and use an explicit in-session vision handoff for pages without usable embedded text. Do not upload source pages or invent OCR results."
 sources:
   - https://pymupdf.readthedocs.io/en/latest/tutorial.html

@@ -1,6 +1,6 @@
 ---
-name: learning-artifact-creation
-description: "Use when a user asks to turn study sources into an exam-ready core pack, recall quiz bank, HTML slides, visual explanation, interactive practice, or a C4-style top-down concept map. Create grounded artifacts only on explicit create/update/publish intent, keep private source evidence separate from the approved web export, and prefer the bundled standalone HTML/SVG/JS map builder for zoomable learning views."
+name: my-create-artifact
+description: "Use when a user asks to turn study sources into an exam-ready core pack, recall quiz bank, HTML slides, visual explanation, interactive practice, or a C4-style top-down concept map. Select the appropriate artifact mode, including the bundled C4 map mode. Create grounded artifacts only on explicit create/update/publish intent, keep private source evidence separate from the approved web export, and prefer the bundled standalone HTML/SVG/JS map builder for zoomable learning views."
 sources:
   - https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages
   - https://pymupdf.readthedocs.io/en/latest/recipes-text.html
@@ -27,6 +27,16 @@ Treat these as separate intents:
 Never infer publication from creation. Do not commit or push as part of this
 skill. Do not copy raw PDFs, parser manifests, raw model responses, private
 notes, credentials, or unrelated repository files into the web root.
+
+## Modes
+
+Choose the mode that matches the explicit artifact request:
+
+- `study-pack` — create grounded concepts, recall questions, and self-contained
+  practice surfaces.
+- `c4-map` — create a top-down context, module, and detail map from declarative
+  data, then render the standalone HTML/SVG/JS view. This is a mode of
+  `my-create-artifact`, not a separate skill.
 
 ## Artifact Set
 
@@ -63,8 +73,8 @@ original evidence.
 4. Add an interactive practice surface only when its questions and answer
    key are grounded. Keep the HTML self-contained so it works offline after
    the file is opened.
-5. Create the map data and generate the standalone map with the bundled
-   template:
+5. In `c4-map` mode, create the map data and generate the standalone map with
+   the bundled template:
 
    ```sh
    python3 scripts/build_map.py \
@@ -92,7 +102,7 @@ original evidence.
    files, symlinks escaping the source root, and unlisted files. It never
    deletes older published files automatically.
 
-## Map Data Contract
+## C4 Map Mode
 
 Use JSON as the portable declarative format. The minimum shape is:
 

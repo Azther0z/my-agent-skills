@@ -2,7 +2,7 @@
 set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
-cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/my-agent-skills/pdf-parser"
+cache_dir="${XDG_CACHE_HOME:-$HOME/.cache}/my-agent-skills/my-parse-pdf"
 venv="$cache_dir/venv"
 
 if test ! -x "$venv/bin/python"; then

@@ -103,7 +103,7 @@ def main() -> int:
     session_dir = (
         args.session_dir.expanduser().resolve()
         if args.session_dir
-        else output_dir.parent / ".pdf-parser" / source.name
+        else output_dir.parent / ".my-parse-pdf" / source.name
     )
     markdown_path = output_dir / f"{source.name}.md"
     manifest_path = output_dir / f"{source.name}.manifest.json"
