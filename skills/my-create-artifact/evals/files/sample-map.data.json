@@ -1,0 +1,43 @@
+{
+  "title": "Sample systems map",
+  "subtitle": "A small fixture for the standalone map builder",
+  "levels": [
+    {"id": "context", "label": "Context"},
+    {"id": "detail", "label": "Details"}
+  ],
+  "nodes": [
+    {
+      "id": "context-a",
+      "label": "Context A",
+      "level": "context",
+      "summary": "A context-level concept.",
+      "detail": "The detail view can point to grounded source material.",
+      "x": 300,
+      "y": 300,
+      "children": ["detail-a"],
+      "sources": ["sample.pdf.md#page-1"]
+    },
+    {
+      "id": "context-b",
+      "label": "Context B",
+      "level": "context",
+      "summary": "A related context-level concept.",
+      "x": 720,
+      "y": 300,
+      "sources": ["sample.pdf.md#page-2"]
+    },
+    {
+      "id": "detail-a",
+      "label": "Detail A",
+      "level": "detail",
+      "summary": "A deeper concept.",
+      "detail": "This node is reached through the Context A drill-down.",
+      "x": 500,
+      "y": 300,
+      "sources": ["sample.pdf.md#page-3"]
+    }
+  ],
+  "edges": [
+    {"from": "context-a", "to": "context-b", "label": "relates to"}
+  ]
+}

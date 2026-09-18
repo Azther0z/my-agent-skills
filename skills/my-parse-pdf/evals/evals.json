@@ -1,0 +1,37 @@
+{
+  "skill_name": "my-parse-pdf",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Ingest a mixed English-and-Thai lecture PDF into a private source directory. Preserve the original, create the Markdown companion and manifest, and do not upload any pages to an external service.",
+      "expected_output": "The original PDF is unchanged; a page-oriented `.pdf.md` companion and `.manifest.json` exist; the manifest records English and Thai, source hash, page statuses, and no external OCR call.",
+      "files": [],
+      "expectations": [
+        "Preserves the original PDF instead of rewriting it",
+        "Creates a Markdown companion and machine-readable manifest",
+        "Does not invent OCR or upload source pages"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The PDF parser reports three scanned pages pending. Use the current session's vision capability to transcribe the pages faithfully, retain raw responses in private sidecars, and resume the derivative without summarizing.",
+      "expected_output": "The agent inspects each pending page, records exact visible English/Thai text or `[unreadable]`, applies the responses, updates page statuses, and leaves no pending page unreported.",
+      "files": [],
+      "expectations": [
+        "Uses an explicit agent-mediated page handoff",
+        "Stores raw responses in private per-page sidecars",
+        "Preserves page order and marks uncertainty instead of guessing"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "A user asks whether a PDF contains a particular concept but does not ask to save a derivative. Answer from the available PDF evidence without creating Markdown, manifests, or OCR files.",
+      "expected_output": "The agent answers the question without writing artifact files and states when the PDF has no usable text or requires explicit OCR work.",
+      "files": [],
+      "expectations": [
+        "Does not turn a read-only question into an artifact-producing run",
+        "Reports unavailable or uncertain evidence honestly"
+      ]
+    }
+  ]
+}

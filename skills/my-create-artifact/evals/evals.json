@@ -1,0 +1,37 @@
+{
+  "skill_name": "my-create-artifact",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Turn the parsed material for one midterm topic into a core pack and recall quiz. Keep every claim grounded in the source pages and do not publish anything yet.",
+      "expected_output": "Creates private core-pack.md and recall-quiz.md with page-level references, separated answers, visible uncertainty, and no public copy.",
+      "files": [],
+      "expectations": [
+        "Requires explicit artifact creation intent",
+        "Grounds claims in source-page references",
+        "Keeps the quiz answer key separate from recall prompts"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a top-down C4-style learning map with context, modules, and details. Maintain a declarative data file and generate a standalone HTML/SVG/JS artifact that works offline on mobile and desktop.",
+      "expected_output": "Creates validated declarative map data and a dependency-free standalone map with level navigation, zoom, pan, node details, and drill-down links.",
+      "files": [],
+      "expectations": [
+        "Uses the bundled map builder and template",
+        "Keeps stable node IDs and validates edge references",
+        "Produces a standalone artifact with no CDN dependency"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The user asks which study topic is weakest but does not ask for a new file. Inspect existing artifacts and answer without creating or publishing a derivative.",
+      "expected_output": "Answers from existing material without writing, publishing, committing, or pushing files.",
+      "files": [],
+      "expectations": [
+        "Does not infer create or publish intent from a question",
+        "Preserves existing artifacts unchanged"
+      ]
+    }
+  ]
+}
