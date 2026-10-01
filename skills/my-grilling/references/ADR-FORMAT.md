@@ -1,6 +1,6 @@
 # ADR Format
 
-ADRs live in `docs/adr/` and use sequential numbering: `0001-slug.md`, `0002-slug.md`, etc.
+ADRs live in `docs/adr/` and use the local creation date plus a kebab-case slug: `YYYY-MM-DD-slug.md`, such as `2026-10-01-use-postgres.md`.
 
 Create the `docs/adr/` directory lazily, only when the first ADR is needed.
 
@@ -45,7 +45,7 @@ status: proposed
 - `proposed`
 - `accepted`
 - `deprecated`
-- `superseded by ADR-NNNN`, where `NNNN` is the number of the ADR that supersedes this one
+- `superseded by ADR-YYYY-MM-DD-slug`, where the date and slug identify the ADR that supersedes this one
 
 The exact empty marker for an applicable but empty section is `None.`. Do not omit a required heading or replace the marker with a blank section, `N/A`, or a prose explanation that does not state the section is empty.
 
@@ -61,9 +61,9 @@ Before accepting an ADR, verify all of the following:
 - `Considered Options` includes options, trade-offs, and rejection rationale when alternatives were evaluated; otherwise it contains exactly `None.`.
 - Any other applicable empty section contains exactly `None.`.
 
-## Numbering
+## Naming
 
-Scan `docs/adr/` for the highest existing number and increment by one.
+Use the current local calendar date when the ADR file is created, followed by a concise kebab-case slug describing its decision. The date-and-slug pair must be unique. If another ADR has the same date and slug, choose a distinct descriptive slug rather than adding a counter or timestamp.
 
 ## When To Offer An ADR
 

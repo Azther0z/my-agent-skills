@@ -182,7 +182,7 @@ Design decisions use the same decision vocabulary as `my-grilling` and `referenc
 ## Decisions
 
 ### Decision: <Name>
-<The chosen decision and rationale. Include considered options, their trade-offs, and consequences when meaningful; write `None.` when there are no meaningful options or consequences. If the grilling path creates an ADR, add a link such as `ADR: [ADR-NNNN](../../adr/NNNN-slug.md)`.>
+<The chosen decision and rationale. Include considered options, their trade-offs, and consequences when meaningful; write `None.` when there are no meaningful options or consequences. If the grilling path creates an ADR, add a link such as `ADR: [ADR-YYYY-MM-DD-slug](../../adr/YYYY-MM-DD-slug.md)`.>
 
 ## Implementation Notes
 
