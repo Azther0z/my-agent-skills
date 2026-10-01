@@ -1,132 +1,233 @@
 ---
 name: my-parse-pdf
-description: "Use when a user asks to ingest, extract, OCR, transcribe, or make a PDF searchable, especially for study slides, assignments, scanned handouts, or bilingual English/Thai material. Preserve the original PDF, create a grounded Markdown companion and machine-readable manifest, and use an explicit in-session vision handoff for pages without usable embedded text. Do not upload source pages or invent OCR results."
+description: "Use whenever a user asks to ingest, extract, OCR, transcribe, make searchable, or create a Markdown companion from a PDF, including scanned handouts, study slides, assignments, diagrams, charts, screenshots, or bilingual English/Thai material. Preserve the original, create a grounded page-oriented Markdown derivative and manifest, render and inspect every page, and recover missing visual meaning with source crops and clearly labeled Mermaid reconstructions when safe. Do not use a waiting OCR handoff, upload source pages, or invent unreadable content."
 sources:
-  - https://pymupdf.readthedocs.io/en/latest/tutorial.html
+  - https://skills.sh/anthropics/skills/pdf
+  - https://ai.google.dev/gemini-api/docs/document-processing
+  - https://cloud.google.com/document-ai/docs/enterprise-document-ocr
   - https://pymupdf.readthedocs.io/en/latest/recipes-images.html
   - https://pymupdf.readthedocs.io/en/latest/recipes-text.html
-compatibility: "Requires Python 3.10+ and either uv or python3-venv; the first-use wrapper installs PyMuPDF in a user-owned cache. No system OCR binary is required."
+  - https://pymupdf.readthedocs.io/en/latest/pymupdf4llm/index.html
+  - https://docling-project.github.io/docling/_generated/examples/export_figures/
+  - https://ocrmypdf.readthedocs.io/en/latest/introduction.html
+compatibility: "Requires Python 3.10+ and either uv or python3-venv; the wrappers install pinned PyMuPDF in a user-owned cache. No system OCR binary or external model endpoint is required."
 ---
 
 # PDF Parser
 
-Create inspectable PDF derivatives without changing the source file. This skill
-is intentionally text-first: PyMuPDF extracts embedded text and renders page
-images for review, but this release does not run a local OCR engine or call an
-external model endpoint.
+Create an inspectable, source-faithful PDF derivative with a visual evidence
+layer. The parser is the deterministic preparation step. The active agent owns
+the visual review and writes its applied transcription or visual recovery into
+the Markdown in the same run. Do not turn that work into a queue, a polling
+protocol, or a fake asynchronous OCR job.
 
-## Write Boundary
+## Write boundary
 
-Use this skill only for an explicit artifact-producing request such as:
+Use this skill for an explicit artifact-producing request such as:
 
 - "parse this PDF"
-- "create the Markdown companion"
-- "update the OCR derivative"
-- "finish the pending page transcriptions"
+- "create a Markdown companion"
+- "make this scanned PDF searchable"
+- "transcribe these slides"
+- "preserve the diagrams in a text derivative"
 
-Do not create files for a question about a PDF, a one-off explanation, or a
-routine preview. Never overwrite the original PDF. Keep source PDFs,
-manifests, pending images, and OCR response sidecars in a private source or
-working directory, not in a web export directory.
+For a question about a PDF, answer from available evidence without creating a
+derivative. Never overwrite or rewrite the original PDF. Choose a private
+source/derivative directory; do not put source PDFs, manifests, page renders,
+crops, or agent reconstructions in a published web export.
 
-## Output Contract
+## Design basis
 
-For an input named `lecture.pdf`, produce these companions beside the chosen
-private output directory:
+These references inform the workflow; they are not additional runtime
+dependencies:
 
-- `lecture.pdf.md` — faithful page-oriented Markdown with embedded text and
-  explicit markers for pages awaiting session vision.
-- `lecture.pdf.manifest.json` — schema version, source hash, page count,
-  languages, renderer details, page status, image paths, and errors.
-- `ocr-responses/page-0002.json` — private sidecar containing the full raw
-  in-session model response and the applied transcription for each OCR page.
+- [Anthropic's PDF skill on skills.sh](https://skills.sh/anthropics/skills/pdf)
+  separates core extraction, image/table handling, and optional OCR concerns.
+- [Google Gemini document understanding](https://ai.google.dev/gemini-api/docs/document-processing)
+  treats PDFs as multimodal documents whose diagrams, charts, tables, images,
+  and text need to be considered together.
+- [Google Document AI OCR guidance](https://cloud.google.com/document-ai/docs/enterprise-document-ocr)
+  emphasizes page layout, language hints, quality checks, native PDF parsing,
+  and bounded page processing.
+- [PyMuPDF image recipes](https://pymupdf.readthedocs.io/en/latest/recipes-images.html)
+  support page renders, clipped pixmaps, image extraction, and image-mask
+  handling; [its text recipes](https://pymupdf.readthedocs.io/en/latest/recipes-text.html)
+  support positioned blocks and conservative reading-order repair.
+- [PyMuPDF4LLM](https://pymupdf.readthedocs.io/en/latest/pymupdf4llm/index.html),
+  [Docling figure export](https://docling-project.github.io/docling/_generated/examples/export_figures/),
+  and [OCRmyPDF's preservation guidance](https://ocrmypdf.readthedocs.io/en/latest/introduction.html)
+  reinforce layout-aware output, source-linked figures, and preserving the
+  authoritative PDF instead of rebuilding it blindly.
 
-The original `lecture.pdf` remains authoritative. The Markdown companion is a
-derivative for search and grounding, not a replacement or a summary. Use
-English and Thai as the default requested languages; retain page numbers and
-line breaks where the model can see them. Mark unreadable text as
-`[unreadable]` rather than guessing.
+## Output contract
+
+For an input named `lecture.pdf`, create these files in the private derivative
+directory:
+
+- `lecture.pdf.md` — page-oriented Markdown containing native text, direct
+  visual transcriptions, source-image links where visual evidence matters, and
+  explicitly labeled reconstructions or gaps.
+- `lecture.pdf.manifest.json` — schema version 2, source hash and size, page
+  count, languages, renderer settings, page geometry, text/image/drawing
+  inventory, generated asset paths, and agent-review status.
+- `assets/pages/page-0001.png` — a private render for every source page.
+- `assets/embedded/page-0001-image-01.png` (when safely extractable) — private
+  copies of embedded image blocks with their page bounding boxes.
+- `assets/crops/...png` — targeted source crops created for important visual
+  regions; keep them when they support a transcription or reconstruction.
+
+The source PDF remains authoritative. The Markdown is a grounded derivative,
+not a summary. Keep page numbers and visible line/order information. Preserve
+English and Thai (or the user-requested languages). Use `[unreadable]` or an
+explicit gap such as `[diagram relationship unclear]` instead of guessing.
+
+Distinguish these in the Markdown and manifest:
+
+- **Source text** — text extracted from the PDF or directly transcribed from a
+  visible page.
+- **Source image/crop** — an unchanged render or crop of source evidence.
+- **Reconstruction** — Mermaid, a table, or factual prose derived from visible
+  source content; never present it as if it were the original artwork.
+- **Gap** — content that could not be read or safely represented.
+
+Do not retain a full model response or create an OCR response sidecar. Retain
+only the applied content, its source page/asset reference, and the concise
+method/status metadata needed to audit the derivative.
 
 ## Workflow
 
-1. Read the repository's agent contract and identify the private source and
-   derivative directories. Do not assume a particular wiki or editor tool.
-2. Run the bundled wrapper. It creates a user-space virtual environment on
-   first use and caches the pinned `PyMuPDF` dependency outside Git:
+1. Read the repository's agent contract and choose private source and output
+   directories. Do not assume a particular wiki or editor.
+2. Run the deterministic preparation step. It renders **every** page, records
+   text block/image/drawing geometry, safely extracts embedded image blocks,
+   and creates the Markdown draft and manifest:
 
    ```sh
    scripts/run_parser.sh \
      --input /private/course/lecture.pdf \
      --output-dir /private/course/derived \
-     --session-dir /private/course/ocr-session \
      --languages en,th \
+     --dpi 200 \
      --force
    ```
 
-3. If the command exits with status `2`, read the manifest and open each
-   `session_vision_pending` image with the current agent's vision-capable
-   image tool. Work one page at a time. Return a faithful transcription only;
-   do not summarize, translate, repair uncertain characters, or infer text
-   hidden by graphics.
-4. Write a private responses file with this shape, preserving the complete
-   model response in `raw_response`:
+   The command exits `0` after preparation. A visual review requirement is
+   manifest metadata, not a special exit code and not a request to run another
+   script later.
+3. Open and inspect every `assets/pages/page-*.png` with the current agent's
+   vision-capable image tool. Do not inspect only pages with little extracted
+   text: diagrams and screenshots often share a page with perfectly usable
+   text. If no vision tool is available, keep the render and record an explicit
+   gap; do not fabricate a transcription.
+4. For pages with embedded text, use the deterministic text as the baseline.
+   Correct only obvious reading-order/interleaving errors using block geometry;
+   do not editorially rewrite wording. For scanned or image-only pages,
+   transcribe visible text directly in page order. Mark uncertain characters
+   rather than silently repairing them.
+5. For every visual region that carries meaning not present in the text:
+
+   - identify the region in PDF points from the page/manifest geometry;
+   - create a reproducible source crop with `scripts/run_crop.sh`;
+   - link the crop with a caption such as `Source crop — page 3, diagram`; and
+   - choose the safest representation below.
+
+   ```sh
+   scripts/run_crop.sh \
+     --input /private/course/lecture.pdf \
+     --page 3 \
+     --rect 72,180,540,610 \
+     --dpi 300 \
+     --output /private/course/derived/assets/crops/page-0003-diagram-01.png
+   ```
+
+   Keep the crop as ground truth even when a reconstruction is added.
+6. Recover visual meaning conservatively:
+
+   - **Flowcharts, pipelines, sequences, trees, and graphs:** add Mermaid only
+     when the nodes, labels, direction, and relationships are visibly clear.
+     Label it `Reconstruction (not source)` and keep the source crop beside it.
+   - **Tables:** use a Markdown table only when cell boundaries and values are
+     clear; otherwise keep the crop and describe the legible structure.
+   - **Equations or code in an image:** transcribe only what is legible; use a
+     crop for anything whose notation cannot be represented reliably.
+   - **Photos, screenshots, or decorative art:** retain a crop and a short,
+     factual caption only when it helps identify the source content. Do not
+     infer hidden context.
+   - **Unreadable or ambiguous regions:** keep the source evidence and write a
+     precise gap marker. A complete-looking guess is a failed parse.
+
+7. Reconcile the Markdown and manifest directly. Each page should have an
+   `agent_review` object like this; do not create a response file or invoke an
+   apply/handoff script:
 
    ```json
    {
-     "pages": [
-       {
-         "page": 2,
-         "text": "Visible transcription here.",
-         "raw_response": "The exact response returned by the model."
-       }
-     ]
+     "status": "complete_with_gaps",
+     "method": "direct-agent-vision",
+     "artifacts": ["assets/crops/page-0003-diagram-01.png"],
+     "gaps": ["rightmost arrow label is unreadable"]
    }
    ```
 
-5. Apply the handoff. The script writes private per-page response sidecars,
-   updates the Markdown page block, and reconciles the manifest:
+   Use `complete` when no meaningful content is missing and
+   `complete_with_gaps` when the remaining limitation is explicitly recorded.
+8. Verify before reporting completion:
 
-   ```sh
-   scripts/apply_session_ocr.py \
-     --markdown /private/course/derived/lecture.pdf.md \
-     --manifest /private/course/derived/lecture.pdf.manifest.json \
-     --responses /private/course/ocr-session/responses.json \
-     --response-dir /private/course/ocr-responses
-   ```
+   - the original PDF hash and byte size are unchanged;
+   - every page has a deterministic status and an agent-review status;
+   - every page render referenced by the manifest exists;
+   - every linked crop/reconstruction asset exists;
+   - source text, direct transcription, reconstruction, and gaps are visibly
+     distinguishable;
+   - no unexplained blank page, `OCR_PENDING` marker, response sidecar, or
+     unreported visual region remains.
 
-   It exits `2` when pages remain pending and `0` when all pages are complete.
-6. Verify the manifest has no pending pages, every page has a status, the
-   original hash is unchanged, and the Markdown contains no unexplained blank
-   page. Report any remaining `session_vision_pending` page explicitly.
+## Manifest and status rules
 
-## What This Release Does Not Do
+The parser emits schema version 2. Its page status describes deterministic
+preparation (`embedded_text` or `visual_only`); `agent_review.status` describes
+the active agent's visual pass (`required`, `complete`, or
+`complete_with_gaps`). The parser may return normal completion while reviews
+are required because it never waits for the agent or owns the agent's edits.
 
-- It does not upload PDFs or page images to an external endpoint.
-- It does not run Tesseract, OCRmyPDF, a local neural OCR model, or a hidden
-  fallback that consumes substantial host resources.
-- It does not publish source PDFs, manifests, or raw response sidecars.
-- It does not turn a parser request into a Git commit or push.
+Record asset paths relative to the manifest/Markdown directory. Record page
+coordinates in PDF points and preserve the original page number (1-based).
+Treat image and drawing bounding boxes as evidence hints, not as proof that a
+complete figure has been segmented: a diagram may be made from many vector
+drawings or mixed text and images.
 
-If external OCR is later added, it needs a separate explicit opt-in, provider
-and model configuration, data-transfer notice, retry policy, and manifest
-backend field. Do not add that behavior implicitly to this skill.
+## What this release does not do
 
-## Failure Handling
+- It does not run Tesseract, OCRmyPDF, a local neural OCR model, or an external
+  OCR/model endpoint implicitly.
+- It does not upload PDFs or page images.
+- It does not create a persistent in-session OCR response queue or raw model
+  response sidecars.
+- It does not rewrite the source PDF, publish private assets, or turn parsing
+  into a Git commit or push.
+- It does not claim that a crop or Mermaid diagram is source-native content.
 
-- Missing PyMuPDF: use `scripts/run_parser.sh`; never install into the
-  repository or system Python without an explicit environment decision.
-- Encrypted, malformed, or unreadable PDF: preserve the original, write an
-  error in the manifest, and stop rather than emitting an empty successful
-  derivative.
-- Missing vision capability: keep the rendered page and pending status; do
-  not replace it with guessed text.
-- Existing derivatives: require `--force` for a full parser rerun. The apply
-  script only updates pages supplied in the response file.
+If a future release adds local or external OCR, it needs a separate explicit
+decision covering dependencies, language packs, data transfer, privacy,
+quality/uncertainty, retries, and manifest provenance.
 
-## Bundled Scripts
+## Failure handling
+
+- Missing PyMuPDF: use the bundled wrappers; never install into the repository
+  or system Python without an explicit environment decision.
+- Encrypted, malformed, or unreadable PDF: preserve the original, write the
+  error in the manifest, and stop rather than emitting an empty success.
+- Missing vision capability: preserve the generated page render and record a
+  gap; do not guess.
+- Existing derivatives: require `--force` for a deterministic rerun. The old
+  `--session-dir` and `apply_session_ocr.py` handoff are intentionally removed;
+  rerun the source through this workflow instead of trying to migrate its
+  response sidecars.
+
+## Bundled scripts
 
 - `scripts/run_parser.sh` — user-space dependency bootstrap and parser entry.
-- `scripts/parse_pdf.py` — embedded text extraction, page rendering, and
-  manifest generation.
-- `scripts/apply_session_ocr.py` — explicit application of session vision
-  responses and private provenance sidecars.
+- `scripts/parse_pdf.py` — text extraction, all-page rendering, and visual
+  inventory/manifest generation.
+- `scripts/run_crop.sh` — user-space dependency bootstrap and crop entry.
+- `scripts/crop_pdf.py` — reproducible page-region rendering from PDF points.
