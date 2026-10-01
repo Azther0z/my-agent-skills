@@ -15,7 +15,10 @@ from typing import Any
 try:
     import pymupdf
 except ModuleNotFoundError:
-    print("PyMuPDF is missing; run scripts/run_parser.sh instead.", file=sys.stderr)
+    print(
+        "PyMuPDF is missing; run scripts/run_tool.py parse_pdf.py instead.",
+        file=sys.stderr,
+    )
     raise SystemExit(1)
 
 

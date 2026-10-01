@@ -12,7 +12,9 @@ from pathlib import Path
 try:
     import pymupdf
 except ModuleNotFoundError:
-    raise SystemExit("PyMuPDF is missing; run scripts/run_crop.sh instead.")
+    raise SystemExit(
+        "PyMuPDF is missing; run scripts/run_tool.py crop_pdf.py instead."
+    )
 
 
 def parse_rect(value: str) -> tuple[float, float, float, float]:
