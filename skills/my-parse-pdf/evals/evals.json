@@ -3,30 +3,41 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Ingest a mixed English-and-Thai lecture PDF into a private source directory. Preserve the original, create the Markdown companion and manifest, and do not upload any pages to an external service.",
-      "expected_output": "The original PDF is unchanged; a page-oriented `.pdf.md` companion and `.manifest.json` exist; the manifest records English and Thai, source hash, page statuses, and no external OCR call.",
+      "prompt": "Ingest a mixed English-and-Thai lecture PDF into a private source directory. Preserve the original, create the Markdown companion and manifest, render every page for visual review, and do not upload any pages to an external service.",
+      "expected_output": "The original PDF is unchanged; a page-oriented `.pdf.md`, schema-versioned manifest, and private page renders exist; the manifest records English and Thai, source hash, page geometry, text/image/drawing inventory, and direct-agent review status.",
       "files": [],
       "expectations": [
         "Preserves the original PDF instead of rewriting it",
-        "Creates a Markdown companion and machine-readable manifest",
-        "Does not invent OCR or upload source pages"
+        "Renders every page and creates a Markdown companion and machine-readable manifest",
+        "Does not invent OCR, create a response queue, or upload source pages"
       ]
     },
     {
       "id": 2,
-      "prompt": "The PDF parser reports three scanned pages pending. Use the current session's vision capability to transcribe the pages faithfully, retain raw responses in private sidecars, and resume the derivative without summarizing.",
-      "expected_output": "The agent inspects each pending page, records exact visible English/Thai text or `[unreadable]`, applies the responses, updates page statuses, and leaves no pending page unreported.",
+      "prompt": "A digital PDF page contains selectable lecture text plus a flowchart made from vector shapes. Parse it without losing the flowchart: inspect the whole page, create a reproducible source crop, and add a Mermaid reconstruction only if the visible labels and arrows are clear.",
+      "expected_output": "The Markdown retains the extracted text, links the source page/crop, labels the Mermaid block as a reconstruction rather than source text, and records the crop/reconstruction in the manifest without claiming unsupported relationships.",
       "files": [],
       "expectations": [
-        "Uses an explicit agent-mediated page handoff",
-        "Stores raw responses in private per-page sidecars",
-        "Preserves page order and marks uncertainty instead of guessing"
+        "Does not route a text-rich page away from visual review",
+        "Creates and links a source crop as ground truth",
+        "Keeps any Mermaid diagram explicitly labeled and conservative"
       ]
     },
     {
       "id": 3,
-      "prompt": "A user asks whether a PDF contains a particular concept but does not ask to save a derivative. Answer from the available PDF evidence without creating Markdown, manifests, or OCR files.",
-      "expected_output": "The agent answers the question without writing artifact files and states when the PDF has no usable text or requires explicit OCR work.",
+      "prompt": "A scanned PDF has three pages; one contains a blurry diagram with an unreadable arrow label. Use the active session's vision capability directly, transcribe only visible content, preserve the page evidence, and finish with an explicit gap instead of waiting for or applying an OCR response file.",
+      "expected_output": "The scanned text is transcribed faithfully where legible, the blurry diagram has a source crop, the unreadable label is reported explicitly, the manifest says `complete_with_gaps`, and no `responses.json`, raw response sidecar, or pending queue is created.",
+      "files": [],
+      "expectations": [
+        "Uses direct agent vision without an apply/wait handoff",
+        "Marks unreadable content instead of guessing",
+        "Leaves an auditable source crop and explicit gap"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "A user asks whether a PDF contains a particular concept but does not ask to save a derivative. Answer from the available PDF evidence without creating Markdown, manifests, page renders, crops, or OCR files.",
+      "expected_output": "The agent answers the question from available evidence and states when the PDF has no usable text or requires explicit visual work, without writing artifact files.",
       "files": [],
       "expectations": [
         "Does not turn a read-only question into an artifact-producing run",
