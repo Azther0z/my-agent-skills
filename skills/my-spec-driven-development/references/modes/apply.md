@@ -32,7 +32,9 @@ Use existing style and tooling. Do not introduce broad refactors that the propos
 
 ## Live Plan Updates
 
-Artifacts are the live plan. If implementation proves one stale:
+Formal SDD artifacts are the live implementation contract. A `plan.md` with
+`status: promoted` is read-only provenance, not a competing live plan. If
+implementation proves a formal artifact stale:
 
 - Fix code when the artifact is the intended contract.
 - Update the artifact first when the artifact is wrong and the better path is clear.

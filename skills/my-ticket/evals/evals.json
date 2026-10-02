@@ -1,0 +1,95 @@
+{
+  "skill_name": "my-ticket",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Draft a Jira story from this early request before any plan or SDD exists. Capture the as-is problem, to-be outcome, scope, guidance, acceptance, and open questions. Do not create planning artifacts or pretend the ticket is ready if a material decision is missing.",
+      "expected_output": "Produces a copy-ready intake ticket with a summary, issue type, concise description, honest readiness state, and no new plan/spec/design/tasks files.",
+      "files": [],
+      "expectations": [
+        "Treats the ticket as intake rather than a hidden SDD artifact",
+        "Includes as-is, to-be, in/out scope, acceptance, and open questions",
+        "Does not create or modify planning or SDD artifacts"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Using the existing plan, formal SDD artifacts, and ADR, compose a compact Jira story for the same change. Keep the ticket self-contained for execution but link the deeper artifacts instead of copying their full detail or architectural rationale.",
+      "expected_output": "Produces a concise ticket payload with current state, outcome, scope, only relevant guidance, acceptance, verification, dependencies, and references to the plan/SDD artifacts; the source artifacts remain unchanged.",
+      "files": [],
+      "expectations": [
+        "Uses artifacts as source material without making the ticket a full design document",
+        "Preserves the distinction between ticket summary and formal artifact detail",
+        "Includes useful references and does not invent missing links",
+        "Links architectural rationale through the ADR without duplicating its alternatives or tradeoffs"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Review this long Jira ticket that contains the entire design history and a full implementation checklist. Make it shorter without losing the as-is problem, to-be outcome, scope, guidance, acceptance, verification, or references.",
+      "expected_output": "Reports overlong or misplaced detail, proposes a compact replacement description, and moves full rationale/history/checklist detail into references rather than deleting necessary execution context.",
+      "files": [],
+      "expectations": [
+        "Keeps execution-critical context in the ticket",
+        "Removes or links detailed alternatives and route history",
+        "Does not silently change the requested outcome"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Decide whether this large change should remain one story ticket with subtasks or become multiple sibling tickets. The work has one user outcome but several implementation owners and phases.",
+      "expected_output": "Keeps one parent story when the acceptance boundary and outcome are shared, drafts bounded subtasks with their own acceptance and verification, and explains when a sibling ticket would instead be warranted.",
+      "files": [],
+      "expectations": [
+        "Does not equate an Epic with the SDD change or parent story",
+        "Uses subtasks for implementation decomposition within one outcome",
+        "Checks independent outcome, priority, release, owner, and acceptance signals"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "An existing ticket now has a plan, design ADR, and SDD change. Add only verified references and a concise context note to the ticket. Do not edit any of those artifacts and do not publish to Jira.",
+      "expected_output": "Produces a minimal ticket update payload containing verified artifact references, leaves the artifacts unchanged, and clearly says that no external Jira update occurred.",
+      "files": [],
+      "expectations": [
+        "Treats the ticket as a pointer to artifacts rather than a contributor to them",
+        "Does not invent paths or links",
+        "Stops at a copy-ready update without external publication"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The user asks my-planning to turn a plan into a Jira ticket. Route the request to the ticket-specific workflow instead of creating local ticket files or changing the plan.",
+      "expected_output": "Explains that my-ticket owns ticket drafting/refinement, passes the plan as reference context, and preserves the plan and SDD artifact boundaries.",
+      "files": [],
+      "expectations": [
+        "Does not add ticket.md under docs/change",
+        "Does not treat ticket creation as a planning artifact operation",
+        "Keeps external publication explicit and unauthorized by default"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Draft a GitHub issue for a repository that has not configured GitHub issue types and where the user supplied no labels, milestone, or project. Include the issue title and a compact body with acceptance and verification. Do not publish or invent tracker fields.",
+      "expected_output": "Produces a copy-ready GitHub issue title and Markdown body, treats the type as a suggestion rather than an unsupported native field, and does not claim an issue was created.",
+      "files": [],
+      "expectations": [
+        "Supports GitHub Issues as a target alongside Jira",
+        "Maps summary and execution context to issue title and body",
+        "Does not invent issue types, labels, milestones, projects, or links",
+        "Does not publish without an explicit request and configured integration"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "The user explicitly asks to publish a GitHub issue, but no GitHub integration or authorized tool is configured. Prepare the issue payload and clearly state that it was not published.",
+      "expected_output": "Returns a copy-ready GitHub issue title and body, identifies the missing integration as the blocker, and makes no claim of external creation.",
+      "files": [],
+      "expectations": [
+        "Recognizes GitHub Issues as supported for drafting",
+        "Requires an actually configured and authorized integration for publishing",
+        "Reports that no external issue was created"
+      ]
+    }
+  ]
+}

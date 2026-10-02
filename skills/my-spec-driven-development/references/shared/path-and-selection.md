@@ -20,7 +20,7 @@ For `apply`, `verify`, and `archive`:
 4. If multiple active changes exist, ask the user to choose.
 5. Never implement, verify, or archive an archived change unless the user explicitly asks to inspect or resurrect it.
 
-For `plan`, update an existing folder only when the user is clearly continuing the same work. Otherwise ask before reusing a name or creating a similarly named change.
+For `plan`, update an existing folder only when the user is clearly continuing the same work. A folder containing only `plan.md` is a compatible `my-planning` prelude: read it when the user asks to promote or continue that change, and do not mistake it for a complete formal change. At the first formal artifact, freeze the prelude by setting `status: promoted`, `formal_change: docs/change/<change-name>/`, and the current `updated` date; do not edit its body afterward. Otherwise ask before reusing a name or creating a similarly named change.
 
 ## Existing Specs And User Changes
 

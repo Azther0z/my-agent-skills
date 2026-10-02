@@ -1,0 +1,93 @@
+{
+  "skill_name": "my-planning",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a lightweight plan for adding a command-line flag to this existing tool. Inspect the repository first, ask only questions that would change the implementation, and save one living plan without creating formal SDD artifacts.",
+      "expected_output": "Creates docs/change/<slug>/plan.md with plan frontmatter, outcome, scope, current state, approach, a small work graph, acceptance criteria, verification, risks, and next action; does not create proposal.md, spec/, design.md, or tasks.md.",
+      "files": [],
+      "expectations": [
+        "Chooses quick mode when the route is known and bounded",
+        "Uses docs/change/<slug>/plan.md as the only plan artifact",
+        "Asks only material blocker questions and records other uncertainty as assumptions"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a full plan for a settled feature that will take several sessions and has three independently verifiable vertical slices. Include dependencies, owned areas, phase checkpoints, acceptance, verification, and a critical path. Keep tracker tickets out of the planning workflow.",
+      "expected_output": "Creates one full-mode plan.md with vertical-slice work items, true blockers only, phase checkpoints, interface or ownership notes, risks, and a clear next frontier; no external tracker activity occurs.",
+      "files": [],
+      "expectations": [
+        "Uses full mode rather than wayfind when the route is already known",
+        "Avoids horizontal layer-only decomposition",
+        "Does not create tracker tickets and routes any ticket request to my-ticket"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Wayfind a large, foggy greenfield effort that is too large for one session. Establish the destination, ask the currently unblocked decision frontier in rounds, separate facts from human decisions, record fog and out-of-scope work, and do not start implementation.",
+      "expected_output": "Creates or updates a wayfind plan with destination, notes, decisions so far, frontier decision nodes, not-yet-specified fog, out-of-scope boundaries, and a stopping rule that hands off to full planning or SDD when the route is clear.",
+      "files": [],
+      "expectations": [
+        "Uses decision nodes rather than tracker tickets or premature implementation tasks",
+        "Does not answer human decisions autonomously",
+        "Keeps unresolved fog distinct from out-of-scope work"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Resume an existing plan whose first task is done, second task is partly implemented, and third task is blocked by a missing test fixture. Reconcile it against the current diff and tests, record evidence and the blocker, and do not silently change the outcome or scope.",
+      "expected_output": "Updates the existing plan in place, uses [x], [~], and [!] honestly, appends a progress entry, records verification evidence and the real blocker, recomputes the next action, and preserves prior decisions.",
+      "files": [],
+      "expectations": [
+        "Treats plan maintenance as reconciliation rather than a rewrite",
+        "Does not mark work complete without acceptance and verification evidence",
+        "Requires confirmation before a material scope or behavior change"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Promote the existing lightweight plan for a change involving a public API contract into the formal spec-driven workflow. Preserve the plan as provenance, map its content to proposal, delta spec, design, and tasks, and stop at the next confirmed artifact boundary.",
+      "expected_output": "Recognizes that formal SDD is warranted, summarizes the plan-to-SDD mapping, hands off to my-spec-driven-development plan, and does not itself create formal artifacts or claim the change is ready to apply.",
+      "files": [],
+      "expectations": [
+        "Uses the existing docs/change/<slug>/plan.md rather than creating a second plan location",
+        "Hands formal artifact creation, grilling, and boundary approval to SDD",
+        "Preserves SDD apply/verify/archive gates"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "The user asks my-planning to turn a settled plan into a Jira story. Route ticket drafting to the separate ticket-specific workflow, use the plan only as source context, and do not create local ticket files or publish externally.",
+      "expected_output": "Explains the handoff to my-ticket, preserves the plan and SDD artifact boundaries, and does not create ticket.md or other tracker files.",
+      "files": [],
+      "expectations": [
+        "Routes ticket semantics to my-ticket rather than owning them in my-planning",
+        "Does not create a fifth artifact under docs/change",
+        "Keeps external Jira publication explicit and unauthorized by default"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "A lightweight plan already has proposal.md from an SDD promotion. The user asks to update plan progress. Do not edit the frozen prelude; route them to the appropriate SDD mode and explain its status transition.",
+      "expected_output": "Recognizes the first formal artifact as the freeze boundary and hands progress updates to SDD without rewriting plan content. If the formal artifact exists but plan metadata was not transitioned, asks SDD to repair only status: promoted and the formal_change link.",
+      "files": [],
+      "expectations": [
+        "Does not maintain plan.md after formal SDD work begins",
+        "Uses promoted as frozen-provenance status",
+        "Routes further work to the appropriate SDD lifecycle mode"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Continue a wayfinding session with several independent decision nodes now unblocked. Ask the whole current frontier together, then recompute the next frontier after answers; do not limit progress to one node per session.",
+      "expected_output": "Presents all currently unblocked independent decision nodes in one question round, distinguishes them from tracker tickets, and recomputes newly unblocked nodes after the user's answers.",
+      "files": [],
+      "expectations": [
+        "Asks the complete currently unblocked frontier",
+        "Uses decision node terminology rather than ticket terminology",
+        "Has no arbitrary one-node-per-session cap"
+      ]
+    }
+  ]
+}

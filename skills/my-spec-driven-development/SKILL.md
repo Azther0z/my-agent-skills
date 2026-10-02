@@ -26,7 +26,11 @@ Route a Markdown spec-driven workflow through one portable skill. The detailed i
 
 ## Operating Contract
 
-- This skill owns `docs/spec/`, `docs/change/`, and the active change lifecycle.
+- This skill owns formal `docs/spec/` artifacts and the formal change lifecycle.
+- `my-planning` may create a plan-only precursor at
+  `docs/change/<change-name>/plan.md`. That file is compatible input and
+  provenance, not a complete SDD change; `apply`, `verify`, and `archive` still
+  require the full formal artifact contract.
 - Do not use the `openspec` CLI, `openspec/` directories, stores, schemas, generated instructions, or `.openspec.yaml`.
 - Read this file, the selected mode reference, and the shared references that mode names before acting. Do not load every mode reference by default.
 - Preserve unrelated user changes. Do not commit, push, install skills, or change an external system as part of a mode.
