@@ -4,18 +4,19 @@
     {
       "id": 1,
       "prompt": "Create a lightweight plan for adding a command-line flag to this existing tool. Inspect the repository first, ask only questions that would change the implementation, and save one living plan without creating formal SDD artifacts.",
-      "expected_output": "Creates docs/change/<slug>/plan.md with plan frontmatter, outcome, scope, current state, approach, a small work graph, acceptance criteria, verification, risks, and next action; does not create proposal.md, spec/, design.md, or tasks.md.",
+      "expected_output": "Explains the understood outcome, evidence, assumptions, proposed route, and risks; creates the explicitly requested docs/change/<slug>/plan.md with plan frontmatter, outcome, scope, current state, approach, a small work graph, acceptance criteria, verification, and next action. Keeps it draft until the human confirms shared understanding and does not create formal SDD artifacts.",
       "files": [],
       "expectations": [
         "Chooses quick mode when the route is known and bounded",
         "Uses docs/change/<slug>/plan.md as the only plan artifact",
-        "Asks only material blocker questions and records other uncertainty as assumptions"
+        "Asks only material blocker questions and records other uncertainty as assumptions",
+        "Explains the agent's understanding rather than treating file creation as agreement"
       ]
     },
     {
       "id": 2,
-      "prompt": "Create a full plan for a settled feature that will take several sessions and has three independently verifiable vertical slices. Include dependencies, owned areas, phase checkpoints, acceptance, verification, and a critical path. Keep tracker tickets out of the planning workflow.",
-      "expected_output": "Creates one full-mode plan.md with vertical-slice work items, true blockers only, phase checkpoints, interface or ownership notes, risks, and a clear next frontier; no external tracker activity occurs.",
+      "prompt": "Explain and save a full plan for a settled feature that will take several sessions and has three independently verifiable vertical slices. Include dependencies, owned areas, phase checkpoints, acceptance, verification, and a critical path. Keep tracker tickets out of the planning workflow.",
+      "expected_output": "Explains the route and coordination tradeoffs and saves the explicitly requested full-mode plan.md with vertical-slice work items, true blockers only, phase checkpoints, interface or ownership notes, risks, and a clear next frontier; no external tracker activity occurs.",
       "files": [],
       "expectations": [
         "Uses full mode rather than wayfind when the route is already known",
@@ -26,18 +27,20 @@
     {
       "id": 3,
       "prompt": "Wayfind a large, foggy greenfield effort that is too large for one session. Establish the destination, ask the currently unblocked decision frontier in rounds, separate facts from human decisions, record fog and out-of-scope work, and do not start implementation.",
-      "expected_output": "Creates or updates a wayfind plan with destination, notes, decisions so far, frontier decision nodes, not-yet-specified fog, out-of-scope boundaries, and a stopping rule that hands off to full planning or SDD when the route is clear.",
+      "expected_output": "Explains a conversational wayfind map with destination, notes, decisions so far, frontier decision nodes, not-yet-specified fog, and out-of-scope boundaries. Shows options and consequences before asking human decisions, recomputes the map after answers, and recommends an appropriate planning depth or software SDD handoff when the route clears; saves nothing without an explicit request.",
       "files": [],
       "expectations": [
         "Uses decision nodes rather than tracker tickets or premature implementation tasks",
         "Does not answer human decisions autonomously",
-        "Keeps unresolved fog distinct from out-of-scope work"
+        "Keeps unresolved fog distinct from out-of-scope work",
+        "Explains the map and decision context instead of running a questions-only interview",
+        "Uses no-artifact by default even for a large wayfinding effort"
       ]
     },
     {
       "id": 4,
-      "prompt": "Resume an existing plan whose first task is done, second task is partly implemented, and third task is blocked by a missing test fixture. Reconcile it against the current diff and tests, record evidence and the blocker, and do not silently change the outcome or scope.",
-      "expected_output": "Updates the existing plan in place, uses [x], [~], and [!] honestly, appends a progress entry, records verification evidence and the real blocker, recomputes the next action, and preserves prior decisions.",
+      "prompt": "Update the existing saved plan whose first task is done, second task is partly implemented, and third task is blocked by a missing test fixture. Explain the reconciliation against the current diff and tests, record evidence and the blocker in the plan, and do not silently change the outcome or scope.",
+      "expected_output": "Explains the evidence-backed reconciliation and updates the explicitly authorized existing plan in place, uses [x], [~], and [!] honestly, appends a progress entry, records verification evidence and the real blocker, recomputes the next action, and preserves prior decisions.",
       "files": [],
       "expectations": [
         "Treats plan maintenance as reconciliation rather than a rewrite",
@@ -81,12 +84,138 @@
     {
       "id": 8,
       "prompt": "Continue a wayfinding session with several independent decision nodes now unblocked. Ask the whole current frontier together, then recompute the next frontier after answers; do not limit progress to one node per session.",
-      "expected_output": "Presents all currently unblocked independent decision nodes in one question round, distinguishes them from tracker tickets, and recomputes newly unblocked nodes after the user's answers.",
+      "expected_output": "Explains each independent human decision's context, options, recommendation, and consequences, then presents the complete unblocked human frontier in one question round. Inspects accessible factual prerequisites itself, distinguishes decision nodes from tracker tickets, and explains the recomputed map after the user's answers without saving files by default.",
       "files": [],
       "expectations": [
         "Asks the complete currently unblocked frontier",
         "Uses decision node terminology rather than ticket terminology",
-        "Has no arbitrary one-node-per-session cap"
+        "Has no arbitrary one-node-per-session cap",
+        "Answers human requests for explanation rather than replacing them with more interview questions"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Create a plan for learning introductory statistics over four weeks. I can study three hours a week and want to interpret research papers, not build software. Explain what you would focus on and why. I have not asked for any files.",
+      "expected_output": "Explains the understood learning outcome, the twelve-hour constraint, a proportionate proposed sequence, alternatives and tradeoffs, assumptions about prior knowledge, and practice-based success checks. Invites scrutiny and checks shared understanding without requiring a repository, writing a plan file, or turning learning into a software backlog.",
+      "files": [],
+      "expectations": [
+        "Treats an ordinary create-a-plan request as no-artifact unless saving a document is explicit",
+        "Uses learning outcomes and exercises rather than file edits or invented test commands",
+        "Distinguishes known constraints from assumptions about the learner",
+        "Explains why the proposed topics and order serve the human's goal",
+        "Does not claim shared understanding before the human confirms it"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "You proposed five interviews before writing our research summary. Why interviews rather than a survey, what are you assuming, and what evidence would make you change that recommendation? We want to explore possible reasons people abandon a workshop, not estimate their prevalence. Do not interview me or save anything; help me understand your approach.",
+      "expected_output": "Answers the human's questions directly, connects exploratory interviews to the stated research goal, compares the survey alternative, and labels the sample-size suggestion and other unsupported assumptions as provisional. Explains limits and evidence that would change the route without fabricating sources, launching interviews, or substituting a grilling session.",
+      "files": [],
+      "expectations": [
+        "Makes the agent's recommendation and its basis inspectable by the human",
+        "Answers why, assumptions, and revision conditions before asking for more context",
+        "Does not invent evidence or justify five interviews as a confirmed requirement",
+        "Does not conduct the proposed research or create artifacts"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Your proposed article plan assumes the readers are specialists and puts a literature review first. That is wrong: the supplied brief says the readers are newcomers and need a practical introduction. Re-check that evidence and show how your approach, outline, and review criteria change. Keep this in conversation.",
+      "expected_output": "Accepts the correction, re-checks the available brief or clearly identifies the user's quoted brief as the available evidence, and revises the audience interpretation, proposed outline, dependencies, and review criteria. Explains the impact rather than defending the old plan or claiming to have read an unavailable file.",
+      "files": [],
+      "expectations": [
+        "Treats the explicit correction as authoritative evidence",
+        "Re-checks accessible evidence and does not pretend unavailable materials were inspected",
+        "Updates every affected part of the route, not just the audience label",
+        "Keeps the revised approach proposed until shared understanding is confirmed",
+        "Does not edit files in no-artifact mode"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "We have a writable workspace but no software repository. Explain and save a full plan at plans/community-workshop/plan.md for a small community workshop. The proposed route is preparation, a pilot session, then the main session. Include reviewable outcomes, dependencies, readiness checks, and resource assumptions. Do not book venues, contact people, or create tracker tickets.",
+      "expected_output": "Explains the event route and tradeoffs, then saves only the explicitly requested Markdown plan at the given path, using the existing quick/full/wayfind metadata contract with mode full. Includes event-appropriate acceptance and readiness evidence, checkpoints, and unconfirmed resource or ownership assumptions; keeps status draft unless the human confirms the proposed route.",
+      "files": [],
+      "expectations": [
+        "Supports saved general-work plans without requiring Git or software artifacts",
+        "Honors the requested location and does not create a second canonical plan",
+        "Uses reviewable event outcomes and actual prerequisites rather than software layers",
+        "Does not fabricate budgets, availability, or commitments for other people",
+        "Does not send messages, book, publish, or create SDD artifacts"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Help me understand a route for a one-day local-history research project. We have not settled whether the result is a short article or a source guide, or which period it covers. Those two choices are independent; source-access decisions depend on the period. Explain the decision map and alternatives, then ask the currently unblocked human choices together. Do not save a plan or start the research.",
+      "expected_output": "Uses conversational wayfinding despite the effort being small, explains the destination and independent format/period choices with recommendations and tradeoffs, and asks both in one frontier round. Leaves dependent source-access decisions for later, distinguishes unavailable facts from human choices, and explains how answers alter the route.",
+      "files": [],
+      "expectations": [
+        "Selects wayfind for uncertainty rather than only for large or software work",
+        "Explains options and consequences before asking the human to choose",
+        "Asks the whole independent human frontier without prematurely asking downstream decisions",
+        "Inspects accessible factual prerequisites instead of asking the human to perform lookups",
+        "Does not execute research, save files, or recommend SDD merely because choices are unresolved"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Inspect the saved workshop plan and explain what is stale, but no artifact changes. It marks venue readiness complete, although the supplied readiness review says accessibility is still unchecked. The practice run has participant feedback, but the final session has not happened. Distinguish these evidence states and tell me what should change; do not contact the venue.",
+      "expected_output": "Reads the named plan if available, distinguishes supplied review evidence from anything it inspected, and explains why venue readiness is not verified, what the practice feedback supports, and what remains pending. Proposes status and next-action corrections in conversation without editing the saved plan or pretending unavailable evidence was checked.",
+      "files": [],
+      "expectations": [
+        "Honors no-artifact during maintain mode even when a saved plan exists",
+        "Uses domain review evidence rather than requiring code, commits, or tests",
+        "Does not equate partial evidence with completed acceptance",
+        "Reports proposed corrections and verification limits without claiming to have applied them",
+        "Does not change scope or contact an external party"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "We have just finished reviewing your event-planning approach. I say: yes, that matches my intent and I understand the assumptions. You have my confirmation of shared understanding, not permission to book anything, write documents, or send invitations. What happens next?",
+      "expected_output": "Acknowledges the confirmed shared understanding, distinguishes it from completion of the event and authorization to execute, and identifies the next proposed action and any approval it would need. Does not execute, save, book, or contact anyone.",
+      "files": [],
+      "expectations": [
+        "Recognizes explicit confirmation of understanding without conflating it with execution approval",
+        "Does not claim the work itself is complete because planning is complete",
+        "Stays no-artifact and does not broaden the authorized scope",
+        "Reports a next action rather than silently carrying it out"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Explain your plan for a high-stakes organizational policy review. We already know the route: gather existing policies, compare gaps, get stakeholder review, and propose revisions over several sessions. Keep it in chat, explain dependencies and verification, and do not turn this into a software specification or assign people without agreement.",
+      "expected_output": "Uses full-depth conversational planning because the route is settled, explains reviewable phases, dependencies, evidence and stakeholder checks, risks, and provisional ownership. Does not require SDD promotion, architectural records, a repository, or saved documents merely because the non-software effort is large or high-stakes.",
+      "files": [],
+      "expectations": [
+        "Supports full depth in no-artifact mode",
+        "Does not confuse scale or risk with uncertainty or mandatory SDD promotion",
+        "Uses policy-appropriate review and evidence checks",
+        "Labels ownership and resource estimates as proposals rather than commitments"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Explain a lightweight approach for adding a command-line flag to this existing tool. Inspect the repository and tell me what you understand, what areas you would touch, the alternatives, and how you would check the result. I am asking for a plan, not a plan document or implementation.",
+      "expected_output": "Uses quick-depth no-artifact planning with a repository evidence pass, explains the software route and success checks, and labels assumptions and open choices. Does not write docs/change/<slug>/plan.md, create formal artifacts, or implement the flag without an explicit follow-up authorization.",
+      "files": [],
+      "expectations": [
+        "Preserves software planning as one supported domain rather than removing it",
+        "Does not implicitly save a plan even when a repository is available",
+        "Explains the recommendation and alternatives with inspected evidence",
+        "Keeps planning, artifact permission, and implementation authorization separate"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "I understand the architectural constraint in the existing ADR, but want you to explain how it shapes this software plan and what its tradeoffs are. Keep this in conversation. Do not write an ADR or duplicate its rationale into a plan file just to answer my question.",
+      "expected_output": "Reads the relevant ADR if available, explains its decision-relevant rationale and consequences conversationally, distinguishes recorded evidence from any inference, and shows the resulting planning constraint. Preserves ADR-only durable rationale without treating an artifact as a prerequisite for explaining the approach.",
+      "files": [],
+      "expectations": [
+        "Can explain architectural tradeoffs in conversation without generating documents",
+        "Uses the existing ADR as the durable source of architectural rationale",
+        "Does not create or rewrite an ADR as a planning side effect",
+        "Does not claim an unavailable ADR was read or invent its decision"
       ]
     }
   ]

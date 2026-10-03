@@ -26,10 +26,10 @@ The `npx skills` CLI installs the skills under the user's agent directories and 
 
 | Skill | Use case | Short description |
 | --- | --- | --- |
-| `my-grilling` | Clarify a request through a structured interview. | Asks focused questions in decision-frontier rounds; can optionally maintain project context and ADRs. |
-| `my-planning` | Plan, break down, or map software work. | Creates and maintains lightweight plans, roadmaps, and decision/dependency maps. |
+| `my-grilling` | Help the agent understand the human. | Asks focused questions in decision-frontier rounds; can optionally maintain project context and ADRs. |
+| `my-planning` | Help the human understand the agent's approach to any work. | Explains evidence, assumptions, options, steps, and risks in conversation; saves and maintains plans only when requested. |
 
-**Workflow:** Promote a lightweight plan to `my-spec-driven-development` when the work needs formal change artifacts.
+**Workflow:** Both skills pursue mutual understanding from opposite directions. `my-planning` is conversation-first for general work; software plans can optionally be promoted to `my-spec-driven-development` when formal change artifacts are needed.
 
 ### Coding
 

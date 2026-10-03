@@ -55,6 +55,11 @@ Start by understanding the user's intent. The current conversation might already
 3. What's the expected output format?
 4. Should we set up test cases to verify the skill works? Skills with objectively verifiable outputs (file transforms, data extraction, code generation, fixed workflow steps) benefit from test cases. Skills with subjective outputs (writing style, art) often don't need them. Suggest the appropriate default based on the skill type, but let the user decide.
 
+Discuss file boundaries for this skill before drafting. Propose what belongs in
+`SKILL.md` and what, if anything, belongs in supporting files, and agree on the
+structure with the user. Reuse an explicit decision already made in the
+conversation rather than asking again. Follow the per-skill guidance below.
+
 ### Interview and Research
 
 Proactively ask questions about edge cases, input/output formats, example files, success criteria, and dependencies. Wait to write test prompts until you've got this part ironed out.
@@ -89,18 +94,40 @@ skill-name/
 #### Progressive Disclosure
 
 Skills use a three-level loading system:
-1. **Metadata** (name + description) - Always in context (~100 words)
-2. **SKILL.md body** - In context whenever skill triggers (<500 lines ideal)
+1. **Metadata** (name + description) - Always available
+2. **SKILL.md body** - Loaded whenever the skill triggers
 3. **Bundled resources** - As needed (unlimited, scripts can execute without loading)
 
-These word counts are approximate and you can feel free to go longer if needed.
+These loading levels describe how skills work, not a required file layout.
 
-**Key patterns:**
-- Keep SKILL.md under 500 lines; if you're approaching this limit, add an additional layer of hierarchy along with clear pointers about where the model using the skill should go next to follow up.
-- Reference files clearly from SKILL.md with guidance on when to read them
-- For large reference files (>300 lines), include a table of contents
+#### Decide File Boundaries Per Skill
 
-**Domain organization**: When a skill supports multiple domains/frameworks, organize by variant:
+There is no one-pattern-fits-all boundary between `SKILL.md` and supporting
+files. Do not default to routing every workflow into a separate file or keeping
+everything inline. Use no numeric line or word targets or caps to choose a layout.
+
+At each skill creation, discuss the structure before drafting:
+
+1. Map the workflows and their relationships. Identify which procedures need to
+   be understood together, even when only one is being performed, and which
+   instructions tend to be maintained together. Different mode names alone do
+   not demonstrate independence.
+2. Propose what stays in `SKILL.md`, what moves outside it, and why those
+   boundaries fit this skill. Formats, specialist guidance, examples, scripts,
+   and assets are possible supporting resources, not an automatic extraction list.
+3. Compare the effects on use and maintenance: required reads, missing neighboring
+   context, duplicated rules, unnecessary detail, and changes spread across files.
+   Discuss the tradeoffs and get the user's agreement; do not impose a universal
+   extraction test or architecture.
+4. Make the chosen structure usable. Keep resources inside the skill directory,
+   clearly explain when supporting instructions must be read, and use a table of
+   contents or meaningful grouping where it helps navigation.
+
+When improving an existing skill, revisit affected boundaries with the user only
+when restructuring is relevant. Preserve its organization otherwise.
+
+**Example, not a default:** Independently understandable provider variants might
+use separate references:
 ```
 cloud-deploy/
 ├── SKILL.md (workflow + selection)
@@ -109,7 +136,9 @@ cloud-deploy/
     ├── gcp.md
     └── azure.md
 ```
-Claude reads only the relevant reference file.
+For this organization, read the relevant variant and any needed shared context,
+not all provider files. If the variants must be understood together, discuss a
+different boundary instead.
 
 #### Principle of Lack of Surprise
 
